@@ -1,0 +1,22 @@
+\section{Objetivos}
+
+En base al caso de estudio planteado en la sección  anterior, mediante la implementación de algún algoritmo de clustering de minería de datos 
+se definen los siguientes objetivos:
+
+\begin{enumerate}
+
+ \item Agrupar los ítems, que representan el mismo dominio de información. Esto es, reconocer los recursos que tienen el mismo tipo,
+ como por ejemplo, agrupar todos los ítems de tipo película
+ 
+ \item Etiquetar aquellos grupos encontrados de acuerdo al tipo de información que representan.
+ 
+ \item Reconocer a qué clase de la ontología schema.org pertenecen aquellos grupos encontrados, si es que existe alguna.
+ 
+ \item Verificar la performance de los clusterings realizados en base a métricas ya definidas.
+ 
+ \item Evaluar las distintas posibles configuraciones del algoritmo de clsutering elegido.
+ 
+ \item Intentar establecer una relación entre la performance obtenida para un agrupamiento encontrado, y el éxito obtenido en corresponder 
+ los grupos con clases de la taxonomía definida por schema.org
+ 
+\end{enumerate}

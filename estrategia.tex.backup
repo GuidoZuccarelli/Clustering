@@ -1,0 +1,143 @@
+\section{Estrategia}
+
+\subsection{Preparación de los datos}
+
+\subsubsection{Selección de los datos}
+Dado que se parte de un dataset extremadamente grande, el primer paso es determinar qué recursos se van a seleccionar y qué información 
+de los mismos se utilizarán.\\
+\\
+Las propiedades que relacionan los ítems con otros recursos que se elegirán, tienen que definir información representativa del ítem. 
+Por ejemplo una propiedad irrelevante para el caso podría ser itemCondition (que describe si el producto es nuevo o usado). 
+En cambio una muy relevante sería su descripción. 
+Otro aspecto a tener en cuenta es el grado de abarcatividad de la propiedad en la población, dado que una propiedad puede ser muy descriptiva, pero sólo estar 
+presente en un individuo de la misma.\\
+\\
+En base a los criterios descriptos, las propiedades elegidas fueron:\\\\
+Nombre (del producto)\\
+Descripción (del producto)\\
+Nombre (del review del producto) \\
+ReviewBody (del review del producto) \\
+\\
+La información elegida entonces, se utilizará como representación de un ítem, para lo que deberá conformar entonces una bolsa de palabras.\\
+También cada ítem está identificado por un id único en el dataset.\\ 
+Los datos resultantes deberán tener una estructura organizada en un par de valores para cada ítem, donde el primer valor es el ID del mismo
+y el segundo es el conjunto de palabras, proveniente de los valores de las propiedades seleccionadas, separadas por espacio.\\
+
+\subsubsection{Obtención de los datos}
+Una vez determinada qué información se requiere, es necesario realizar algunos procedimientos para obtenerla de manera correcta.
+Existen algunas situaciones que pueden presentar dificultades para realizar el mismo:\\
+\begin{itemize}
+ \item Un ítem puede relacionarse con más de un recurso bajo una misma propiedad. Por ejemplo, un ítem puede tener la propiedad nombre dos veces, para poner dos nombres distintos.
+ \item Un ítem puede no utilizar una o más de las propiedades escogidas.
+ \item Los ítems contienen generalmente más de un review.
+ \item Los reviews de los ítems se pueden obtener por dos propiedades distintas.
+ \item Los valores de las propiedades pueden contener secuencias de caracteres como \verb|\t o \n| que afectarán la estructura del documento resultante.
+\end{itemize}
+
+Una buena forma de obtener la información es a travez de consultas sparql. Ya que proporciona un acceso rápido y eficiente a los datos.
+Pero debido a las posibles circunstancias planteadas en el punto anterior, esta estrategia no será suficiente. Se requerirá de un algoritmo en Java
+para organizar los datos.\\
+Para lograr obtener un documento con la estructura planteada anteriormente, se realizaron los siguientes pasos.
+\begin{description}
+  \item[First] Primero una consulta sparql que obtenga todos los pares de valores \verb|ID - {valor de la propiedad}|. 
+  \item[Second] Luego contando con una estructura de HashMap de java, donde la clave es el ID del ítem y el valor es un ArrayList 
+  de Strings, almacenar el valor de la propiedad en un elemento del ArrayList de ese ítem. De manera que al final se obtenga por ítem un ArrayList con cada valor de cada propiedad.
+  \item[Third] Una vez confeccionado el HashMap, suprimir todos los posibles valores de \verb|\t o \n| que puedan generar problemas
+  \item[Fourth] Por último se puede recorrer el HashMap e imprimir en un archivo, cada ID de ítem, seguido por los elementos de su ArrayList separados por espacio. 
+\end{description}
+
+\subsection{Planificación de la estrategia}
+
+\subsubsection{Selección de algoritmo}
+En este punto, se deberá escoger alguno de los algortimos de clustering posibles para implementar y así cumplir los objetivos planteados. \\
+Las opciones son muchas, y varían en distintos tipos:\\\\
+Algoritmos basados en conectividad (que pueden ser aglomerativos y divisivos)\\\\
+Algoritmos basados en centroides\\\\
+Algoritmos basados en modelos de distribución\\\\
+Algoritmos basados en densidad\\
+\\
+El algoritmo escogido fue el k-medias, por su relación entre simplicidad y eficiencia. 
+
+\subsubsection{Modelado de los datos}
+
+El algoritmo k-medias requiere manejar un conjunto de datos ponderables para su ejecución, lo que hace que una bolsa de palabras por cada ítem, 
+sea insuficiente para su implementación.\\
+Es necesario entonces definir una estrategia de modelado de datos que transforme el documento actual con una estructura en forma de bolsa de palabras 
+a un modelo que le dé determinado peso a la representación de los ítems.\\
+La técnica más comunmente usada en estos casos es la representación en forma de un vector de palabras, donde cada fila representa a un ítem, y 
+cada columna representa a determinada palabra, de manera que para N ítems y M palabras, se tienen un total de NxM celdas. Y el valor de cada celda es 
+determinado por el algoritmo TF-IDF.
+Esto da una representación ponderada de cada ítem.
+
+\subsubsection{Implementación}
+
+Tanto el algoritmo TD-IDF como K-medias son ampliamente utilizados y se encuentran disponibles en múltiples herramientas.\\
+Por lo que no es necesario codificar cada uno de ellos, sino que se puede utilizar algunad e estas herramientas.\\
+En este caso se optó por la utilización de la herramienta Rapidminer. Que dispone de todos los algoritmos necesarios para realizar 
+la implementación.\\
+Luego de importar el dataset con la bolsa de palabras los operadores utilizados en rapidminer fueron:\\
+\begin{description}
+  \item[1] Retrieve. Que selecciona el documento y lo pone a disposición de los operadores. 
+  \item[2] Process document from data. Este operador recibe un dataset y lo transforma en un documento. El formato de este documento resultante 
+  es configurado en el operador. Por nuestra estrategia decidida, en el campo vector creation se seleccionó TF-IDF luego de haber tildado la casilla ``create word vector''.
+  \item[2.1] Dentro del mismo operador se realizo primero un paso de tokenizar (que divide el documento en una secuencia de tokens, donde cada token representaría una palabra).
+  \item[2.2] El siguiente operador es el transform cases, que lleva todas las palabras a minúscula.
+  \item[2.3] Y luego se utiliza el operador de stemming snowball. 
+  \item[3] Una vez procesado el documento, se lo envía al operador de clustering. Donde se puede configurar el K (la cantidad de centroides, que deriva en la cantidad de grupos creados) \ldots
+\end{description}
+
+En cuanto a la configuración de los modelos, se utilizó como valores de K el conjunto de \verb|{9,10,12,13,17,20,25,30}| por lo que la implementación, 
+se ejecutó 8 veces, obteniendo así, 8 modelos de clustering distintos para el mismo conjunto de ítems.
+
+\subsection{Análisis de los resultados}
+
+Este punto es el que determina cómo se llevarán a cabo los objetivos. Y se divide en dos formas de llevarlo a cabo\\
+Índice de eficacia: Realizado automáticamente por un algoritmo.\\
+Análisis experto: Los resultados del clustering son examinados manualmente para determinar qué tan bien funcionó el clustering.\\
+
+\subsubsection{Índice de eficacia}
+
+Se utiliza alguna medida de validación del clustering, generada por un algoritmo a elección.\\
+Existen varios algoritmos, entre los que sen encuentran: \\\\
+Davies–Bouldin index\\\\
+Dunn index\\\\
+Silhouette coefficient\\
+\\
+Se optó por el Silhouette coefficient en base a que es la opción que mejor funciona con un clustering realizado por el algoritmo k-medias 
+dado que ayuda a determinar cuál es el número óptimo de clusters configurable del algoritmo.\\
+\\
+Si bien este algoritmo se encuentra disponible como operador en rapidminer, su elevado orden de ejecución (que llegaría a $$N.M^{2}$$  
+siendo N la cantidad de palabras del dataset, y M la cantidad de ítems) sumado a la gran cantidad de datos con los que se trabajan,
+hacen que el algoritmo no escale y demore una extremadamente grande cantidad de tiempo. \\
+Se codificó entonces, una versión de este algoritmo que utilice programación dinámica, y multithreading para hacerlo ejecutable en un 
+razonable período de tiempo por la pc.\\
+
+\subsubsection{Análisis experto}
+
+Consiste en visualizar manualmente una muestra de los resultados, para así poder determinar exactamente cada ítem a qué tipo de producto 
+pertenecía, y compararlo con el resto de los ítems de la muestra de su mismo cluster.\\
+\\
+Una observación de este tipo permitirá:\\
+\begin{enumerate}
+ \item Identificar a qué tipo de producto pertenecen la mayoría de los ítems contenidos en él. Si es que se consigue una marginal mayoría.\\
+ \item Evaluar subjetiva y objetivamente qué tan bien funcionó cada modelo de cluster obtenido. Para poder también relacionarlo con los resultados 
+del índice silhouette.
+ \item En base al tipo de producto identificado en cada cluster, encontrar una clase en la ontología de schema que lo represente.
+\end{enumerate}
+
+El tamaño de la muestra debería estar acotado por la cantidad mínima necesaria de individuos de un cluster necesarios para que conformen 
+una muestra representativa, y la cantidad máxima de ítems que humanamente se pueden analizar sin que esta sea una tarea exageradamente larga.\\
+\\
+Considerando 2500, como la cantidad de ítems adecuada para observar humanamente y hacer de ésta una tarea razonable, se distribuirán, a travez de 
+cada cluster de cada modelo de la siguiente manera:\\
+$$v_{ij} = 10+\frac{c_{ij}}{100} $$\\
+Siendo v = cantidad de ítems analizados para el cluster i del modelo j. Y c la cantidad total de ítems del cluster i del modelo j.\\
+Esto da un total de 2558 observaciones.
+
+\subsection{Clasificación}
+
+Por último, una vez obtenidos los resultados, y pudiendo determinar cuál modelo de clustering fue el más adecuado, se puede proceder a 
+clasificar los ítems según la ontología schema.org.
+
+Para ello sólo se requiere correr un algoritmo de Java usando la librería de jena, que recorra todos los ítems a los cuales se les pudo 
+asignar una clase, y utilizarla junto con la propiedad type.

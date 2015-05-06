@@ -1,0 +1,56 @@
+\section{Introducción}
+
+\subsection{Dataset semántico}
+
+Un dataset semántico está compuesto por un conjunto de documentos extraídos de la web, que a su vez poseen un conjunto de recursos
+clasificados según su representación en el mundo real. Estos recursos pueden representar objetos tanto físicos como abstractos como por ejemplo: Autos, Libros, Ideas, 
+Servicios, Plantas, etc.
+Este dataset se almacena en una base de datos, la cuál tiene una forma especial para acceder a los datos. Mediante consultas SPARQL, o 
+mediante la utilización de frameworks como Jena.
+Dichos recursos pueden relacionarse entre sí mediante lo que se denomina propiedades, como por ejemplo un Recurso libro, puede estar 
+relacionado, con un recurso Review, mediante la propiedad ``review''. De manera que un documento semántico puede representarse en forma de grafo, 
+donde cada nodo es un recurso, y cada arista es una propiedad.
+
+
+\subsection{Ontologías}
+
+Es la representación abstracta de la taxonomía de los ítems, bajo la cual se encuentran definidos todos los recursos de la web semántica.
+Está formada por un conjunto de clases y relaciones entre ellas, de manera que se puede definir un ítem como individuo de una o más clases 
+de cualquier ontología. Cada clase y relación está definida bajo un namespace que la identifica unívocamente.
+Existen, muchas distintas ontologías en la web que modelan diferentes dominios. 
+La clase de un ítem, también puede ser llamada tipo. Y funciona de manera similar a la programación orientada a objetos. 
+
+\subsection{Item}
+
+Llamaré ítem, a los recursos de clase ``Producto'' del dataset que estén relacionados con al menos un recurso Review. Estos recursos pueden reprensentar 
+múltiples tipos de producto, como por ejemplo: Películas, Ropa, Hardware, etc, los cuales se intentará identificar mediante la clusterización.
+Estos ítems tendrán información representativa, establecida por propiedades y otros recursos.
+
+\subsection{Review}
+
+Es un recurso de clase ``Review'' que se relaciona con un recurso Ítem mediante la propiedad ``review''. Representa la evaluación de dicho ítem 
+de parte de un usuario y está compuesto principalmente por un puntaje numérico y una evaluación textual. \\
+
+\subsection{K-Medias}
+
+Es un algoritmo de agrupamiento que utiliza aprendizaje no supervisado para resolver una clusterización, en K número de clusters (prefijado).\\
+Utiliza K puntos aleatoria o arbitrariamente dispersos en el mapa, que serán llamados centroides. El algoritmo entonces, en varias etapas (también prefijadas) 
+intenta aproximar esos puntos a los clusters, asignándoles los elementos más cercanos.
+Se pueden utilizar varias medidas de distancias, entre las que se encuentran la distancia euclidiana cuadrada, o la distancia Itakura Saito.
+
+\subsection{Modelo de clustering}
+
+Es el resultado de aplicar un algoritmo de clustering, que esta compuesto por la ubicación de sus centroides. Dichos modelos pueden ser utilizados 
+agrupar los datos, simplemente con asignarlos al centroide más cercano. 
+
+\subsection{TF-IDF}
+
+Es una de las más populares medidas que se usa para representar el valor numérico de la información de un documento de texto estructurado en una lista de palabras en consideración a un conjunto de documentos.
+Esta medida pondera cada palabra de un texto, otorgándole un puntaje que depende de cuántas veces dicha palabra se encuentra en un documento, y cuán frecuente 
+es esa palabra en otros documentos.
+
+\subsection{SPARQL}
+
+Es un lenguaje de consultas que se utiliza para acceder y modificar información de un dataset semántico. Para esto se utiliza un motor específico que depende 
+de cómo esté almacenado el dataset semántico. Suele ser bastante flexible, pero no admite demasiada manipulación de los datos resultantes. 
+Se puede combinar la información que retorna pero suele ser con queries muy complejas que además demandan mucho timepo de ejecución.

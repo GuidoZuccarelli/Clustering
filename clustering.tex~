@@ -1,0 +1,35 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+%opening
+\title{Clustering para la clasificación de ítems representados por la web semántica}
+\author{Guido Zuccarelli}
+\usepackage{graphicx}
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este trabajo mostrará la metodología, implementación y resultados de un caso en el cuál, partiendo de un dataset que contiene datos 
+extraídos de la web semántica, se realizó un proceso de clasificación utilizando algún algoritmo de clustering de minería de datos 
+para lograr que los ítems del dataset que representan productos, posean un atributo label, que indique de qué tipo de producto se 
+trata. \\
+Este proceso se convierte en un paso de integración en un trabajo de desarrollo de una aplicación que utilice datos de la web semántica, 
+ya que se agruparán ítems mediante los clusters a los cuales fueron asignados.
+\end{abstract}
+\bigskip
+\tableofcontents
+
+\include{introduccion}
+
+\include{problemaplanteado}
+
+\include{objetivos}
+
+\include{estrategia}
+
+\include{resultados}
+
+\include{conclusiones}
+\end{document}

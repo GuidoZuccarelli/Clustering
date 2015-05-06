@@ -1,0 +1,26 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%opening
+\title{K-Medias para la clasificación de ítems representados por la web semántica}
+\author{Guido Zuccarelli}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este trabajo mostrará un caso en el cuál, partiendo de un dataset que contiene datos extraídos de la web semántica, se realizó un proceso 
+de clasificación utilizando el algoritmo K-Medias, para lograr que los ítems del dataset que representan productos, posean un atributo label, 
+que indique de qué tipo de producto se trata. 
+\end{abstract}
+
+\include{introduccion}
+
+\include{objetivos}
+
+\include{estrategia}
+
+\include{resultados}
+
+\end{document}
